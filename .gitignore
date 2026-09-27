@@ -28,3 +28,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.log
+
+# Generated project data
+data/raw/*.csv
+data/processed/*.csv
