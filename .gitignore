@@ -1,6 +1,8 @@
 # Python
 _pycache_/
 *.py[cod]
+
+# Virtual environments
 .venv/
 venv/
 env/
@@ -31,4 +33,6 @@ Thumbs.db
 
 # Generated project data
 data/raw/*.csv
+data/raw/oracle/*.csv
+data/raw/s3/**/*.csv
 data/processed/*.csv
