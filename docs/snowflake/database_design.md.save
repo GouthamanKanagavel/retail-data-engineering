@@ -1,0 +1,51 @@
+# Snowflake Database Design
+
+## Database
+
+RETAIL_DW
+
+## Schemas
+
+### RAW
+Landing area for source-system data.
+
+- RAW_CUSTOMERS
+- RAW_PRODUCTS
+- RAW_STORES
+- RAW_ORDERS
+- RAW_ORDER_ITEMS
+- RAW_PAYMENTS
+
+### STAGING
+Cleaned and standardized source data.
+
+- STG_CUSTOMERS
+- STG_PRODUCTS
+- STG_STORES
+- STG_ORDERS
+- STG_ORDER_ITEMS
+- STG_PAYMENTS
+
+### ANALYTICS
+Business-ready dimensional model.
+
+- DIM_DATE
+- DIM_CUSTOMER
+- DIM_PRODUCT
+- DIM_STORE
+- FACT_SALES
+- FACT_PAYMENTS
+
+## Data Flow
+
+Oracle / S3
+    ↓
+RAW
+    ↓
+STAGING
+    ↓
+DBT transformations
+    ↓
+ANALYTICS
+    ↓
+Power BI
