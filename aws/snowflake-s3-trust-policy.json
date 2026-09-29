@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SnowflakeS3Access",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::041436771778:user/fbj92000-s"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": "JV18413_SFCRole=4_CL3nGrFjvhdSMk16JssfP+YXPhk="
+        }
+      }
+    }
+  ]
+}
