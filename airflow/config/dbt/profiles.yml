@@ -1,0 +1,13 @@
+retail_dbt:
+  outputs:
+    dev:
+      account: AMKXACO-UM28063
+      database: RETAIL_DW
+      role: ACCOUNTADMIN
+      schema: DBT_DEV
+      threads: 4
+      type: snowflake
+      user: Gouthaman
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      warehouse: COMPUTE_WH
+  target: dev
