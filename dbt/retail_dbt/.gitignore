@@ -1,0 +1,8 @@
+
+# Local dbt virtual environment
+.venv-dbt/
+
+# dbt generated files
+target/
+logs/
+.DS_Store

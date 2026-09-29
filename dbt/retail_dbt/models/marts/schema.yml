@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Calendar dimension for 2026."
+    columns:
+      - name: date_day
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_customer
+    description: "Customer dimension."
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_product
+    description: "Product dimension."
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_store
+    description: "Store dimension."
+    columns:
+      - name: store_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fact_sales
+    description: "Sales transaction fact table at order-item grain."
+    columns:
+      - name: order_item_id
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id

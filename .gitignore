@@ -36,3 +36,12 @@ data/raw/*.csv
 data/raw/oracle/*.csv
 data/raw/s3/**/*.csv
 data/processed/*.csv
+# Local dbt virtual environment
+.venv-dbt/
+
+# dbt generated files
+target/
+logs/
+
+# macOS
+.DS_Store
