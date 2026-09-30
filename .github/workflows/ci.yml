@@ -31,6 +31,26 @@ jobs:
         run: |
           python -m py_compile airflow/dags/retail_dbt_pipeline.py
 
+      - name: Create CI dbt profile
+        run: |
+          mkdir -p "$HOME/.dbt"
+
+          cat > "$HOME/.dbt/profiles.yml" <<'PROFILE'
+          retail_dbt:
+            outputs:
+              ci:
+                account: "ci-placeholder"
+                database: "RETAIL_DW"
+                role: "ACCOUNTADMIN"
+                schema: "DBT_CI"
+                threads: 4
+                type: "snowflake"
+                user: "ci-placeholder"
+                password: "ci-placeholder"
+                warehouse: "COMPUTE_WH"
+            target: ci
+          PROFILE
+
       - name: Validate dbt project
         working-directory: dbt/retail_dbt
         run: |
