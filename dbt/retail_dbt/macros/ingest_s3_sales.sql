@@ -1,6 +1,17 @@
 {% macro ingest_s3_sales() %}
 
 COPY INTO {{ target.database }}.RAW.RAW_S3_SALES_INGEST
+(
+    ORDER_ITEM_ID,
+    ORDER_ID,
+    PRODUCT_ID,
+    QUANTITY,
+    UNIT_PRICE,
+    DISCOUNT,
+    LINE_AMOUNT,
+    SOURCE_FILE,
+    INGESTED_AT
+)
 FROM (
     SELECT
         $1,

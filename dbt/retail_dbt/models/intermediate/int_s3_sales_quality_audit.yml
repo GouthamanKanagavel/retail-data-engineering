@@ -49,6 +49,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                - PASS
-                - FAIL
+              arguments:
+                values:
+                  - PASS
+                  - FAIL

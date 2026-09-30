@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -7,16 +7,23 @@ from airflow.operators.bash import BashOperator
 DBT_DIR = "/opt/airflow/dbt/retail_dbt"
 
 
+default_args = {
+    "retries": 2,
+    "retry_delay": timedelta(minutes=2),
+}
+
 with DAG(
     dag_id="retail_dbt_pipeline",
     start_date=datetime(2026, 9, 29),
     schedule=None,
     catchup=False,
+    default_args=default_args,
     tags=["retail", "s3", "snowflake", "dbt", "quality"],
 ) as dag:
 
     ingest_s3_sales = BashOperator(
         task_id="ingest_s3_sales",
+        execution_timeout=timedelta(minutes=15),
         bash_command=(
             f"cd {DBT_DIR} && "
             "dbt run-operation ingest_s3_sales"
@@ -25,6 +32,7 @@ with DAG(
 
     dbt_build = BashOperator(
     task_id="dbt_build",
+    execution_timeout=timedelta(minutes=15),
     bash_command=(
         f"cd {DBT_DIR} && "
         "dbt build "
@@ -34,6 +42,7 @@ with DAG(
 
     quality_checks = BashOperator(
         task_id="quality_checks",
+        execution_timeout=timedelta(minutes=15),
         bash_command=(
             f"cd {DBT_DIR} && "
             "dbt test --select "

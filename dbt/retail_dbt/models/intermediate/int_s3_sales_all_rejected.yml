@@ -13,10 +13,11 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                - INVALID_QUANTITY
-                - INVALID_UNIT_PRICE
-                - INVALID_DISCOUNT
-                - MISSING_ORDER
-                - MISSING_PRODUCT
-                - UNKNOWN
+              arguments:
+                values:
+                  - INVALID_QUANTITY
+                  - INVALID_UNIT_PRICE
+                  - INVALID_DISCOUNT
+                  - MISSING_ORDER
+                  - MISSING_PRODUCT
+                  - UNKNOWN
