@@ -24,12 +24,13 @@ with DAG(
     )
 
     dbt_build = BashOperator(
-        task_id="dbt_build",
-        bash_command=(
-            f"cd {DBT_DIR} && "
-            "dbt build"
-        ),
-    )
+    task_id="dbt_build",
+    bash_command=(
+        f"cd {DBT_DIR} && "
+        "dbt build "
+        "--vars '{\"airflow_run_id\": \"{{ dag_run.run_id }}\"}'"
+    ),
+)
 
     quality_checks = BashOperator(
         task_id="quality_checks",

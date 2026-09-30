@@ -1,9 +1,15 @@
-{{ config(materialized='table') }}
+{{ config(
+    materialized='incremental',
+    unique_key='audit_run_id',
+    incremental_strategy='merge'
+) }}
 
 WITH rejection_metrics AS (
 
     SELECT
+
         COUNT(*) AS rejected_rows,
+
         COUNT(DISTINCT order_item_id) AS rejected_order_items,
 
         COUNT_IF(rejection_reason = 'INVALID_QUANTITY')
@@ -22,11 +28,13 @@ WITH rejection_metrics AS (
             AS missing_product_rows
 
     FROM {{ ref('int_s3_sales_all_rejected') }}
+
 ),
 
 pipeline_metrics AS (
 
     SELECT
+
         (SELECT COUNT(*)
          FROM {{ source('retail_raw', 'RAW_S3_SALES_INGEST') }}
         ) AS raw_rows,
@@ -46,9 +54,13 @@ pipeline_metrics AS (
         (SELECT COUNT(*)
          FROM {{ ref('fact_sales') }}
         ) AS fact_rows
+
 )
 
 SELECT
+
+    '{{ var("airflow_run_id", invocation_id) }}' AS audit_run_id,
+
     CURRENT_TIMESTAMP() AS audit_timestamp,
 
     p.raw_rows,
@@ -63,6 +75,7 @@ SELECT
     r.invalid_quantity_rows,
     r.invalid_unit_price_rows,
     r.invalid_discount_rows,
+
     r.missing_order_rows,
     r.missing_product_rows,
 
@@ -73,4 +86,5 @@ SELECT
     END AS FACT_RECONCILIATION_STATUS
 
 FROM pipeline_metrics p
+
 CROSS JOIN rejection_metrics r

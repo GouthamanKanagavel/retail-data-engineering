@@ -1,15 +1,27 @@
 version: 2
 
 models:
+
   - name: int_s3_sales_quality_audit
-    description: "Run-level audit metrics for the S3 sales ingestion and trusted fact pipeline."
+
+    description: "Historical run-level audit metrics for the S3 sales ingestion and trusted fact pipeline."
 
     columns:
+
+      - name: audit_run_id
+        tests:
+          - not_null
+          - unique
+
       - name: audit_timestamp
         tests:
           - not_null
 
       - name: raw_rows
+        tests:
+          - not_null
+
+      - name: raw_distinct_order_items
         tests:
           - not_null
 
@@ -22,6 +34,14 @@ models:
           - not_null
 
       - name: fact_rows
+        tests:
+          - not_null
+
+      - name: rejected_rows
+        tests:
+          - not_null
+
+      - name: rejected_order_items
         tests:
           - not_null
 
