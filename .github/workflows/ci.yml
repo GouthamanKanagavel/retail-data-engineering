@@ -110,6 +110,13 @@ jobs:
         env:
           DBT_PROFILES_DIR: ${{ runner.temp }}/.dbt
           AIRFLOW_RUN_ID: github-actions-${{ github.run_id }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
         run: |
           mkdir -p "$DBT_PROFILES_DIR"
           cp "$HOME/.dbt/profiles.yml" "$DBT_PROFILES_DIR/profiles.yml"
