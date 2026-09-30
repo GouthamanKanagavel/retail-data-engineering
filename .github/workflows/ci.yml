@@ -55,3 +55,65 @@ jobs:
         working-directory: dbt/retail_dbt
         run: |
           dbt parse --no-partial-parse
+
+  snowflake-integration:
+    name: Snowflake dbt Integration
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            dbt-core==1.12.0 \
+            dbt-snowflake==1.12.1
+
+      - name: Create Snowflake dbt profile
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+        run: |
+          mkdir -p "$HOME/.dbt"
+
+          cat > "$HOME/.dbt/profiles.yml" <<'PROFILE'
+          retail_dbt:
+            outputs:
+              ci:
+                account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+                database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+                role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+                schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+                threads: 4
+                type: "snowflake"
+                user: "{{ env_var('SNOWFLAKE_USER') }}"
+                password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+                warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+            target: ci
+          PROFILE
+
+      - name: Run dbt build against Snowflake
+        working-directory: dbt/retail_dbt
+        env:
+          DBT_PROFILES_DIR: ${{ runner.temp }}/.dbt
+          AIRFLOW_RUN_ID: github-actions-${{ github.run_id }}
+        run: |
+          mkdir -p "$DBT_PROFILES_DIR"
+          cp "$HOME/.dbt/profiles.yml" "$DBT_PROFILES_DIR/profiles.yml"
+
+          dbt build \
+            --no-partial-parse \
+            --vars "{\"airflow_run_id\": \"${AIRFLOW_RUN_ID}\"}"
