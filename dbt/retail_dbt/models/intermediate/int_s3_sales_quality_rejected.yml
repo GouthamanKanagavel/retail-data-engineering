@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: int_s3_sales_quality_rejected
+    description: "S3 sales records rejected because of invalid measure values."
+
+    columns:
+      - name: order_item_id
+        tests:
+          - not_null
+
+      - name: rejection_reason
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - INVALID_QUANTITY
+                - INVALID_UNIT_PRICE
+                - INVALID_DISCOUNT
+                - UNKNOWN

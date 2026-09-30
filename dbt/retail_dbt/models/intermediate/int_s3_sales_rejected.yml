@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_s3_sales_rejected
+  - name: int_s3_sales_rejected
     description: "S3 sales records rejected from the trusted fact layer because required warehouse relationships are missing."
 
     columns:

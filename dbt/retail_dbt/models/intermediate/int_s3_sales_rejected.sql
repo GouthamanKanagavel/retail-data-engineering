@@ -25,11 +25,5 @@ LEFT JOIN {{ ref('stg_orders') }} o
 LEFT JOIN {{ ref('stg_products') }} p
     ON s.product_id = p.product_id
 
-LEFT JOIN {{ ref('fact_sales') }} f
-    ON s.order_item_id = f.order_item_id
-
-WHERE f.order_item_id IS NULL
-  AND (
-      o.order_id IS NULL
-      OR p.product_id IS NULL
-  )
+WHERE o.order_id IS NULL
+   OR p.product_id IS NULL
