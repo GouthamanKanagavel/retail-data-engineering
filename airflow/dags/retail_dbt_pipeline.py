@@ -15,8 +15,10 @@ default_args = {
 with DAG(
     dag_id="retail_dbt_pipeline",
     start_date=datetime(2026, 9, 29),
-    schedule=None,
+    schedule="0 2 * * *",
     catchup=False,
+    max_active_runs=1,
+    dagrun_timeout=timedelta(minutes=30),
     default_args=default_args,
     tags=["retail", "s3", "snowflake", "dbt", "quality"],
 ) as dag:
