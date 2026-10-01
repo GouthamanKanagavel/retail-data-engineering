@@ -77,34 +77,6 @@ jobs:
             dbt-core==1.12.0 \
             dbt-snowflake==1.12.1
 
-      - name: Create Snowflake dbt profile
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-        run: |
-          mkdir -p "$HOME/.dbt"
-
-          cat > "$HOME/.dbt/profiles.yml" <<'PROFILE'
-          retail_dbt:
-            outputs:
-              ci:
-                account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
-                database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
-                role: "{{ env_var('SNOWFLAKE_ROLE') }}"
-                schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
-                threads: 4
-                type: "snowflake"
-                user: "{{ env_var('SNOWFLAKE_USER') }}"
-                password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
-                warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-            target: ci
-          PROFILE
-
       - name: Run dbt build against Snowflake
         working-directory: dbt/retail_dbt
         env:
@@ -119,7 +91,22 @@ jobs:
           SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
         run: |
           mkdir -p "$DBT_PROFILES_DIR"
-          cp "$HOME/.dbt/profiles.yml" "$DBT_PROFILES_DIR/profiles.yml"
+
+          cat > "$DBT_PROFILES_DIR/profiles.yml" <<'PROFILE'
+          retail_dbt:
+            outputs:
+              ci:
+                account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+                database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+                role: "{{ env_var('SNOWFLAKE_ROLE') }}"
+                schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+                threads: 4
+                type: "snowflake"
+                user: "{{ env_var('SNOWFLAKE_USER') }}"
+                password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+                warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+            target: ci
+          PROFILE
 
           dbt build \
             --no-partial-parse \
