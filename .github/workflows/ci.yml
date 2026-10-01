@@ -92,6 +92,23 @@ jobs:
         run: |
           mkdir -p "$DBT_PROFILES_DIR"
 
+          for name in \
+            SNOWFLAKE_ACCOUNT \
+            SNOWFLAKE_USER \
+            SNOWFLAKE_PASSWORD \
+            SNOWFLAKE_ROLE \
+            SNOWFLAKE_WAREHOUSE \
+            SNOWFLAKE_DATABASE \
+            SNOWFLAKE_SCHEMA
+          do
+            if [ -n "${!name}" ]; then
+              echo "$name=SET"
+            else
+              echo "$name=MISSING"
+              exit 1
+            fi
+          done
+
           cat > "$DBT_PROFILES_DIR/profiles.yml" <<'PROFILE'
           retail_dbt:
             outputs:
