@@ -30,6 +30,10 @@ jobs:
       - name: Validate Airflow DAG syntax
         run: |
           python -m py_compile airflow/dags/retail_dbt_pipeline.py
+      
+      - name: Validate operational health-check syntax
+        run: |
+          python -m py_compile python/ops/retail_pipeline_health.py
 
       - name: Create CI dbt profile
         run: |
