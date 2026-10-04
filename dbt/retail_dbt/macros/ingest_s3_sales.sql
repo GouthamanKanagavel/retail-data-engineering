@@ -1,5 +1,6 @@
 {% macro ingest_s3_sales() %}
 
+{% set sql %}
 COPY INTO {{ target.database }}.RAW.RAW_S3_SALES_INGEST
 (
     ORDER_ITEM_ID,
@@ -28,6 +29,9 @@ FROM (
 FILE_FORMAT = (
     FORMAT_NAME = '{{ target.database }}.RAW.CSV_FORMAT'
 )
-ON_ERROR = 'ABORT_STATEMENT';
+ON_ERROR = 'ABORT_STATEMENT'
+{% endset %}
+
+{% do run_query(sql) %}
 
 {% endmacro %}
